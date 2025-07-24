@@ -1,0 +1,82 @@
+==============================
+Statistical Computing & Empirical Methods – Setup Guide
+==============================
+
+This project uses R programming for statistical simulation, EDA, and supervised learning.
+Please follow the instructions below to set up your environment and run the code.
+
+----------------------------------------
+🔧 Requirements
+----------------------------------------
+
+Make sure you have the following installed:
+
+1. R (version >= 4.1.0)
+   https://cran.r-project.org/
+
+2. RStudio (optional but recommended)
+   https://posit.co/download/rstudio-desktop/
+
+----------------------------------------
+📦 Required R Packages
+----------------------------------------
+
+Install the following packages in R before running any scripts:
+
+```r
+install.packages(c(
+  "tidyverse",      # data wrangling and plotting
+  "rpart",          # decision trees
+  "randomForest",   # random forest models
+  "caret",          # model evaluation and training
+  "ggplot2",        # plotting
+  "reshape2",       # data reshaping
+  "boot",           # bootstrapping and simulation
+  "e1071",          # miscellaneous statistical functions
+  "knitr"           # for rendering R Markdown
+))
+```
+
+----------------------------------------
+📁 Directory Overview
+----------------------------------------
+
+- scripts/     → Contains R scripts for modeling and simulation
+- notebooks/   → R Markdown files with reproducible reports
+- reports/     → Final PDF submissions (Section A, B, C)
+- images/      → Generated visualizations for README and markdown
+- README.md    → Overview of the project
+- setup.txt    → This setup guide
+
+----------------------------------------
+📊 Data Files (Note)
+----------------------------------------
+
+This repository does **not** include the raw Kaggle dataset due to licensing.
+
+Download it manually from:
+https://www.kaggle.com/datasets/krishnaraj30/finance-loan-approval-prediction-data
+
+Save `train.csv` and `test.csv` in the root of your project or wherever needed.
+
+----------------------------------------
+▶️ How to Run
+----------------------------------------
+
+Open RStudio or your terminal, then:
+
+1. Run scripts directly:
+   - `decision_tree_model.R`
+   - `random_forest_model.R`
+   - `bootstrap_simulation.R`
+   - `clt_visualisation.R`
+
+2. Or render markdown reports:
+   ```r
+   rmarkdown::render("notebooks/SectionA_Code_Output.Rmd")
+   ```
+
+ 
+**Thrisha Rajkumar** – University of Bristol
+
+This project is part of the Statistical Computing & Empirical Methods unit.

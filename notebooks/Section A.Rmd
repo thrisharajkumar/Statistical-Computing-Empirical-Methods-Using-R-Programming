@@ -1,0 +1,381 @@
+---
+title: "Section - A SUMMATIVE ASSESSMENT"
+author: "Thrisha Rajkumar"
+date: "`r Sys.Date()`"
+output:
+  pdf_document:
+    latex_engine: xelatex
+---
+
+# SECTION A - SUMMATIVE ASSESSMENT
+
+General instruction: In this part of your assessment, you will perform a data wrangling task using R programming. Note that clarity is highly important. Be careful to make sure you clearly explain each step in your answer. You should also include comments within your code when necessary. In addition, make the structure of your answer clear through the use of headings. You should also make sure your code is clean by making careful use of Tidyverse methods in R.
+
+
+## Data Wrangling Task & Tidyverse Methods in R 
+
+
+### (Q1). First download the files entailed "debt_data.csv", "country_data.csv" and "indicator_data.csv" which are available within the Assessment section within Blackboard. Download the csv files - "debt_data.csv", "country_data.csv" and "indicator_data.csv" and Loaded it to the folder - "Section - A Summative Assessment" The file "debt_data.csv" contains debt data for different countries under different indicators, from 1960 to 2023. The indicators are represented by indicator codes (for example, NY.GNP.MKTP.CD). The file "indicator_data.csv" contains a list of the indicator names as well as their associated indicator codes. The file "country_data.csv" contains information about the country code, income levels, and regions for each country.
+
+-> First, Loading the file "debt_data.csv" into an R data frame called "debt_df", load the file "country_data.csv" into an R data frame called "country_df", and load the file "indicator_data.csv" into a data frame called "indicator_df" using library readr.
+
+```{r}
+#First required package to be used to read the csv files and then load it into a R data frame.
+
+library(readr)
+
+#Loading the file "debt_data.csv" into a R data frame called "debt_df"
+debt_df <- read_csv("debt_data.csv")
+
+#Loading the file "country_data.csv" into an R data frame called "country_df"
+country_df <- read_csv("country_data.csv", show_col_types = FALSE)
+
+#Loading the file "indicator_data.csv" into a data frame called "indicator_data.csv"
+indicator_df <- read_csv("indicator_data.csv", show_col_types = FALSE)
+
+#printing or displaying the first few rows of the data frames - debt_df, country_df, and indicator_df
+
+head(debt_df)
+head(country_df)
+head(indicator_df)
+```
+
+-> Second, use R to check the number of columns and the number of rows that the data frame "debt_df" has. Display your results.
+
+First loading the necessary package - Tidyverse to find the number of rows and columns in the data using ncol() and nrow().
+
+```{r}
+# Loading the tidyverse required package
+library(tidyverse)
+
+# To find the Number of Rows each data frame has we can use "nrow()"
+# To find the Number of Columns of each data frame we can use "ncol()"
+
+#Data Frame - debt_df
+#Number of columns in debt_df
+ncol(debt_df)
+#Number of rows in debt_df
+nrow(debt_df)
+
+#Data Frame - country_df
+#Number of columns in country_df
+ncol(country_df)
+#Number of rows in country_df
+nrow(country_df)
+
+
+#Data Frame - country_df
+#Number of columns in country_df
+ncol(indicator_df)
+#Number of rows in country_df
+nrow(indicator_df)
+
+```
+
+
+
+
+### (Q2). Update "debt_df" by reordering its rows such that the values of the indicator "DT.NFL.BLAT.CD" is in descending order. Display a subset of the updated "debt_df" consisting of the first 4 rows and the columns "Country.Code", "Year", "NY.GNP.MKTP.CD", and "DT.NFL.BLAT.CD".
+
+
+```{r}
+
+#Firstly, we need to update "debt_df" by reordering its rows with the values of indicators in descending order
+# Before proceeding to that step let us print all the column headers in the data
+
+# Checking ofr the column names of the data frame 
+colnames(debt_df)
+
+#Arranging the Column name "DT.NFL.BLAT.CD" in descencding order using arrange(desc())
+
+# debt_df %>% arrange(desc(DT.NFL.BLAT.CD))
+
+debt_df <- debt_df %>% arrange(desc(DT.NFL.BLAT.CD))
+
+#Subset of the updated "debt_df" consisting of the first 4 rows and the columns "Country.Code", "Year", "NY.GNP.MKTP.CD", and "DT.NFL.BLAT.CD"
+
+subset_debt_df <- debt_df %>% 
+  select(Country.Code, Year, NY.GNP.MKTP.CD, DT.NFL.BLAT.CD) %>% 
+  head(4)
+#Displaying subset_debt_df
+subset_debt_df
+#Displaying debt_df
+debt_df
+
+#debt_df_subset <- debt_df %>% arrange(desc(DT.NFL.BLAT.CD), na.rm = TRUE) %>% 
+#  select(Country.Code, Year, NY.GNP.MKTP.CD, DT.NFL.BLAT.CD) %>% 
+#  head(4)
+
+#print(debt_df_subset)
+```
+
+### (Q3). In the data frame "debt_df", the indicators are represented by their associated indicator codes rather than by their names. The data frame "indicator_df" contains a list of indicator names and their corresponding indicator codes. Create a new data frame called "debt_df2" by combining the data from the two data frames "debt_df" and "indicator_df". The new data frame "debt_df2" should be equivalent to "debt_df" except that "debt_df2" now contains indicator names  codes. The indicator names in "debt_df2" should match the indicator codes in "debt_df" according to their correspondence described in "indicator_df". Display a subset of "debt_df2" consisting of the first 5 rows and the three columns "Country.Code", "Year", and "Net financial flows, others (NFL, current US$)".
+
+```{r}
+
+library(dplyr)
+library(tidyr)
+
+# In this question we need to rename the indicator code by their corresponding indicator names from "indicator_df" data frame.
+
+#Let us print the column headers of inddicator_df and the head to understand the dataframe
+
+# creating a vector called "rename_map" for renaming the columns in indicator_df data frame 
+
+colnames(indicator_df)
+
+head(indicator_df)
+ 
+# renaming_vector is a vector which is mapping the indicstor code to its corresponding indicator name here. 
+renaming_vector <- setNames(indicator_df$INDICATOR_NAME, indicator_df$INDICATOR_CODE)
+
+# Using the vector "renaming_vector" now we can rename the columns in debt_df
+#.cols is the columns we need to rename in debt_df
+debt_df2 <- debt_df %>% 
+  rename_with(~ renaming_vector[.x], .cols = names(renaming_vector))
+
+#Diaplaying the colnames to check if the Indicator codes are renamed by the indicator names.
+colnames(debt_df2)
+
+# According to the question Creating a subset with the first 5 rows and the three columns "Country.Code", "Year", and "Net financial flows, others (NFL, current US$)" as mentioned in the question 
+
+subset_debt_df2 <- debt_df2 %>% 
+  select(Country.Code, Year, `Net financial flows, others (NFL, current US$)`) %>%
+  head(5)
+
+subset_debt_df2
+ 
+
+```
+
+<!--
+ # Approach - 2
+ # NOTE : Control + Shift + C to comment multi Line 
+ # Checking of the column names of the data frame - "debt_df"
+ colnames(debt_df)
+ 
+ # Checking of the column names of the data frame - "indicator_df"
+ colnames(indicator_df)
+
+ head(indicator_df)
+ 
+ # As we can see in the head of "indicator_df" the column headers are INDICATOR_CODE and INDICATOR_NAME and the rows contain the information about the codes names.
+ 
+ # Creating a copy of "debt_df" into "debt_df2" data frame as in the question it is mentioned the "debt_df2" data frame should be equivalent to "debt_df" except that "debt_df2".
+ 
+ debt_df2 <- debt_df
+ 
+ # Looping and iterating through number of rows in indicator_df data frame and replacing the column names  so that we can add or combine it to the data frame debt_df2
+ for (i in 1:nrow(indicator_df)) {
+   indicator_code <- indicator_df$INDICATOR_CODE[i]
+   indicator_name <- indicator_df$INDICATOR_NAME[i]
+   
+   
+   # Replace the column name if it matches the code
+   if (indicator_code %in% colnames(debt_df2)) {
+     colnames(debt_df2)[which(colnames(debt_df2) == indicator_code)] <- indicator_name
+   }
+ }
+ # Displaying a subset of "debt_df2" consisting of the first 5 rows and the three columns "Country.Code", "Year", and "Net financial flows, others (NFL, current US$)"
+ 
+ subset_debt_df2 <- debt_df2 %>%
+   select(Country.Code, Year, `Net financial flows, others (NFL, current US$)`) %>%
+  head(5)
+
+print(subset_debt_df2)
+
+--> 
+
+
+
+### (Q4). The data frame "country_df" contains information about Region, Income groups, and country name for each country. Create a new data frame called "debt_df3" by combining data from the two data frames "debt_df2" and "country_df". The new data frame "debt_df3" should contains a) all columns from "debt_df2" and b) 3 columns from "country_df" called "Region", "IncomeGroup", and "Country.Name". Make sure that in each row of "debt_df3", the "Region", "IncomeGroup", and "Country.Name" match "Country.Code" according to their correspondence described in "country_df". Your data frames "debt_df3" and "debt_df2" should have the same numbers of rows, but "debt_df3" has three more columns. Display a subset of "debt_df3" consisting of the first three rows and 4 columns called "Country.Name", "IncomeGroup", "Year", and "Total reserves in months of imports".
+
+
+```{r}
+
+# Checking of the column names of the data frame - "country_df"
+colnames(country_df)
+
+# Create a new data frame called "debt_df3" by combining data from the two data frames "debt_df2" and "country_df"
+# The data frame - "debt_df3" should contain 
+# a) all columns from "debt_df2"
+# b) 3 columns from "country_df" called "Region", "IncomeGroup", and "Country.Name"
+
+# Therefore we can duplicate the dataframe debt_df3 from debt_df2 and then left join to "country_df"to include all rows from "debt_df2", and add matching columns from "country_df". We are left joining from the common column which is by "Country.Code" 
+
+# After the left join, we are selecting "Region", "IncomeGroup", and "Country.Name" for print or display
+# First duplicating the data frame debt_df2 into debt_df3 
+
+debt_df3 <- debt_df2
+
+debt_df3 <- debt_df3 %>%
+  left_join(country_df %>% select(Country.Code, Region, IncomeGroup, Country.Name), 
+            by = "Country.Code") 
+
+#Printing the no of columns in debt_df2 and debt_df3 to check if 3 columns are added and no. of rows remain the same 
+ncol(debt_df2)
+ncol(debt_df3)
+
+nrow(debt_df2)
+nrow(debt_df3)
+
+#Creating the subset_debt_df3 so that the original debt_df3 can be used for the further questions below without any loss in data 
+
+# Creating a subset_debt_df3  to display 3 rows of only the headers - Country.Name, IncomeGroup, Year, `Total reserves in months of imports` 
+subset_debt_df3 <-  debt_df3 %>%
+  select(Country.Name, IncomeGroup, Year, `Total reserves in months of imports`) %>% 
+  head(3)
+
+print(subset_debt_df3)
+
+```
+
+
+
+### (Q5). Rename the following 5 columns from their original names to the new names specified below
+
+| Original column names                                             | New column names  |
+|-------------------------------------------------------------------|-------------------|
+| Total reserves in months of imports                               | Total_reserves    |
+| External debt stocks, total (DOD, current US\$)                   | External_debt     |
+| Net financial flows, bilateral (NFL, current US\$)                | Financial_flow    |
+| Imports of goods, services and primary income (BoP, current US\$) | Imports           |
+| IFC, private nonguaranteed (NFL, US\$)                            | IFC               |
+
+```{r}
+
+# Using rename() function to rename the column headers from their original names to new names 
+# Rename columns in debt_df3 for clarity
+
+# Checking of the column names of the data frame- "debt_df3"
+colnames(debt_df3)
+
+#Renaming the column headers
+debt_df3 <- debt_df3 %>%
+  rename(
+    Total_reserves = "Total reserves in months of imports",
+    External_debt = "External debt stocks, total (DOD, current US$)",
+    Financial_flow = "Net financial flows, bilateral (NFL, current US$)",
+    Imports = "Imports of goods, services and primary income (BoP, current US$)",
+    IFC = "IFC, private nonguaranteed (NFL, US$)"
+  )
+
+#Print the head of debt_df3 to check.
+head(debt_df3)
+
+#creating  a subset_debt_renamed_columns to print and check if the column headers are renames by only selecting the renamed headers and displaying head(4)
+subset_debt_renamed_columns <-  debt_df3 %>%
+  select(Total_reserves, External_debt, Year, Financial_flow, Imports, IFC) %>% 
+  head(4)
+
+print(subset_debt_renamed_columns)
+
+```
+
+
+
+### (Q6). Next generate a summary data frame called “debt_summary” from the data frame “debt_df3” with the following properties:Your summary data frame “debt_summary” should contain 7 rows corresponding to the 7 different Regions, and it should also have 5 columns: 
+"Region" - the names of the 7 different regions including "East Asia & Pacific", "Europe & Central Asia" etc.
+"TR_mn" - the average of "Total_reserves" in each region.
+"ED_md" - the median of "External_debt" in each region.
+"FF_quantile" - the 0.2 quantile of "Financial_flow" in each region.
+"IFC_sd" - the standard deviation of "IFC" in each region.
+All missing values should be discarded when computing the summary data.
+
+```{r}
+
+# Checking of the column names of the data frame- "debt_df3" to generate a summary
+colnames(debt_df3)
+
+#The column headers - "Region", "Total_reserves", "External_debt", "Financial_flow", "IFC" are all present in "debt_df3" data frame 
+
+#Now creating a summary according to the question 
+
+debt_summary <- debt_df3 %>% #Creating a data frame debt_summary 
+  group_by(Region) %>% #grouping the data by Region 
+  summarise(
+    TR_mn = mean(Total_reserves, na.rm = TRUE), #Average is the mean of the Total_reserves, Using the mean() function also specifying to omit the NA or null values 
+    ED_md = median(External_debt, na.rm = TRUE), #Using the median() function in External_debt also specifying to omit the NA or null values
+    FF_quantile = quantile(Financial_flow, probs = 0.2, na.rm = TRUE), #Using the quantile() function in Financial_flow for 0.2 quartile also specifying to omit the NA or null values
+    IFC_sd = sd(IFC, na.rm = TRUE) #Using the sd() function for calculating the standard deviation also specifying to omit the NA or null values
+  )
+
+# Displaying the "debt_summary" data frame
+print(debt_summary)
+
+```
+
+
+
+### (Q7). Based on your data frame “debt_df3”, create a violin plot of "Financial_flow" for each of the regions. The violin plots should be displayed in the same figure and with different colors representing different regions. Ignore all missing values and all values that are smaller than −108 or bigger than 108.
+
+```{r}
+
+# Using the package ggplot2 for visualization and plotting a violin plot of "Financial_flow" for each of the regions
+
+library(ggplot2)
+
+# Ignoring and Filtering out all missing values and all values that are smaller than −108 or bigger than 108 for plotting
+debt_df3 %>%
+  filter(Financial_flow > -10^8 & Financial_flow < 10^8, !is.na(Financial_flow)) %>% #this line is removing the values smaller than -108 and larger than 108 and also is filtering out the null values or missing values 
+  #using ggplot to use violin plotting and specifying x axis as Financial_Flow, and y axis as Region and color by Region.
+  ggplot(aes(x = Financial_flow, y = Region, color = Region)) +
+  geom_violin() + #Creating the violin plot
+  labs(title = "Violin Plot of Financial Flow by Region", #Naming the title of the violin plot
+       x = "Financial Flow",
+       y = "Region") +
+  theme_minimal() +
+  theme( #Here we are adding the ticks mark to each value in the x axis and y axis 
+    panel.border = element_rect(color = "black", fill = NA, size = 0.7),
+    axis.ticks = element_line(color = "black") 
+  )
+
+```
+
+
+
+
+### (Q8). Based on the data frame “debt_df3”, create a plot which displays the "Total_reserves" as a function of the years (from 1960 to 2023), for each of the following countries: Italy, France, United Kingdom, Sudan, Afghanistan, and Brazil. Additionally, the values of "Total_reserves" should be displayed in different panels according to the income groups of the countries. Use different colors to represent different countries.
+
+
+```{r}
+library(tidyr)
+library(ggplot2)
+
+# printing head to understand the Year column in debt_df3 
+head(debt_df3$Year,5)
+
+# modifying the year column by using sub() to replace the "year_" by empty string"" and then converting the year as numeric 
+debt_df3$Year <- as.integer(sub("year_", "", debt_df3$Year))
+
+# we can also remove by library(stringr) as.integer(str_remove(debt_df3$Year, "year_"))
+
+
+# filtering and cleaning the data for the plotting 
+subset_debt_df3 <- debt_df3 %>% 
+  #filtering only countries: Italy, France, United Kingdom, Sudan, Afghanistan, and Brazil by using tidyr s filter() and Year > 1960, Year < 2023
+  filter(Country.Name %in% c("Italy", "France", "United Kingdom", "Sudan", "Afghanistan", "Brazil") & Year > 1960, Year < 2023) %>% 
+  # omitting the null or na values in Year and total_reserves
+  drop_na(Year, Total_reserves)
+
+# Using a line and point graph and x-axis as Year and y axis as Total_reserves and color by Country.Name
+ggplot(subset_debt_df3, aes(x= Year, y= Total_reserves, color = Country.Name)) + # Giving the plot an appropriate title
+  labs( title = "Total Reserves Over Time (1960-2023) by Country and Income Group",
+    x = "Year",
+       y = "Total Reserves", color = "Country Name") +
+  geom_line(size = 0.5) + # using geom_line size =0.6
+  geom_point(size = 1.5) + # using geom_line size = 1.7
+  facet_wrap(~ IncomeGroup, scale = "fixed") +
+  theme_minimal() +
+  theme(
+    panel.background = element_rect(fill ="White"), #plot area as white
+    #border around the plot as black ith the size=0.7
+    panel.border = element_rect(color = "black", fill = NA, size = 0.7),
+    #To replicate the deaired plot from question using strip_background and strip.text 
+    strip.background = element_rect(color = "black", fill = "grey90"),
+    strip.text = element_text(size = 8),
+    #Here we are adding the ticks mark to each value in the x axis and y axis 
+    axis.ticks = element_line(color = "black") 
+  )
+
+```
